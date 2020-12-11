@@ -16,10 +16,26 @@ function emmetMake(query) {
 }
 
 function emmetBuild(query) {
-  let result = ""
+  return emmetParse(query).map(buildEl).join("")
+}
+
+function buildEl(el) {
+  return `<${el.tagName}>${singleTags.includes(el.tagName)
+    ? "" : `${el.children.map(buildEl).join("")}</${el.tagName}>`}`
+}
+
+function emmetParse(query) {
   const tokens = query.split("+")
+  const result = []
+
   tokens.forEach(query => {
-    result += `<${query}>${singleTags.find(tag => tag == query) ? "" : `</${query}>`}`
+    const moreChildren = query.split(">")
+    result.push({
+      tagName: moreChildren[0],
+      children: !singleTags.includes(moreChildren[0])
+        && moreChildren.length > 1 ? emmetParse(moreChildren.slice(1).join(">")) : []
+    })
   })
+
   return result
 }
