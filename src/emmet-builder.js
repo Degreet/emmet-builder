@@ -4,9 +4,22 @@ const singleTags = ["area", "base", "basefont", "bgsound",
   "track", "wbr"]
 
 function emmetMake(query) {
-  return document.createElement(query)
+  const tokens = query.split("+")
+
+  if (tokens.length == 1) {
+    return document.createElement(query)
+  } else {
+    const els = []
+    tokens.forEach(query => els.push(document.createElement(query)))
+    return els
+  }
 }
 
 function emmetBuild(query) {
-  return `<${query}>${singleTags.find(tag => tag == query) ? "" : `</${query}>`}`
+  let result = ""
+  const tokens = query.split("+")
+  tokens.forEach(query => {
+    result += `<${query}>${singleTags.find(tag => tag == query) ? "" : `</${query}>`}`
+  })
+  return result
 }
