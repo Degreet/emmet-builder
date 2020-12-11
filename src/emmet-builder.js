@@ -4,15 +4,14 @@ const singleTags = ["area", "base", "basefont", "bgsound",
   "track", "wbr"]
 
 function emmetMake(query) {
-  const tokens = query.split("+")
+  const tree = emmetParse(query)
+  return tree.length == 1 ? makeEl(tree[0]) : tree.map(makeEl)
+}
 
-  if (tokens.length == 1) {
-    return document.createElement(query)
-  } else {
-    const els = []
-    tokens.forEach(query => els.push(document.createElement(query)))
-    return els
-  }
+function makeEl(struct) {
+  const el = document.createElement(struct.tagName)
+  struct.children.forEach(child => el.append(makeEl(child)))
+  return el
 }
 
 function emmetBuild(query) {
